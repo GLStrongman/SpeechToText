@@ -3,6 +3,7 @@ import pyttsx3 as py
 import os
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
+import ffmpeg
 
 #  Initialize SpeechRecognition
 rec = sr.Recognizer()
@@ -14,6 +15,11 @@ path = os.path.dirname(filename)
 print(filename, "  path:  ", path)
 textfname = filename + '.txt'
 
+#  Convert chosen file to .wav
+stream = ffmpeg.input(filename)
+stream = ffmpeg.output(stream, 'tmp/output.wav')
+ffmpeg.run(stream)
+
 
 #  Method to read string of text out loud
 def SpeakText(command):
@@ -23,7 +29,7 @@ def SpeakText(command):
 
 
 #  Records audio from the given file
-file = sr.AudioFile(filename)
+file = sr.AudioFile('tmp/output.wav')
 with file as source:
     audio = rec.record(source)
 
@@ -38,4 +44,4 @@ file = open(textfname, "w+")
 file.write(text)
 file.close()
 
-
+os.remove('tmp/output.wav')
